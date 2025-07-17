@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt  # <--- Agrega esta línea
 from config import Config
 
 # Inicializa la aplicación Flask
@@ -13,5 +14,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICAT
 
 # Inicializa la instancia de SQLAlchemy
 db = SQLAlchemy(app)
+
+# Inicializa la instancia de Bcrypt
+bcrypt = Bcrypt(app)  # <--- Agrega esta línea
 
 # Aquí irán las rutas de nuestra API más adelante...
