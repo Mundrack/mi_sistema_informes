@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Informes de Ciberdefensa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Dashboard de Informes</h1>
+            <p>Visualiza y gestiona los informes de seguridad de la Fuerza Terrestre.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filters">
+            <input type="text" id="filterInput" placeholder="Filtrar por tipo (ej: boletin)">
+            <button id="filterButton" class="btn">Aplicar Filtro</button>
+            <button id="clearFilterButton" class="btn">Mostrar Todos</button>
+        </section>
+
+        <section class="reports-list">
+            <h2 class="list-title">Informes Disponibles</h2>
+            <div id="reportsContainer" class="report-grid">
+                </div>
+            <p id="loadingMessage">Cargando informes...</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Sistema de Gestión de Informes de Ciberdefensa &copy; 2025</p>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

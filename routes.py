@@ -4,15 +4,8 @@
 from flask import request, jsonify
 from app import app, db, bcrypt
 from models import Usuario, Rol, Grupo, Informe, SeccionInforme, Monitoreo, DetalleCorreoAtacante, Vulnerabilidad, Incidente, CadenaLlamada 
-from datetime import datetime # <--- ¡AÑADE ESTA LÍNEA!
-
-# =========================================================
-# RUTAS DE PRUEBA
-# =========================================================
-
-@app.route('/')
-def home():
-    return jsonify({"message": "API de Informes de Ciberseguridad activa."}), 200
+from datetime import datetime 
+from flask import render_template
 
 # =========================================================
 # RUTAS DE AUTENTICACIÓN
@@ -411,3 +404,11 @@ def eliminar_informe(informe_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Ocurrió un error al eliminar el informe: {str(e)}"}), 500
+     
+# =========================================================
+# RUTA PARA SERVIR LA PÁGINA PRINCIPAL
+# =========================================================
+
+@app.route('/')
+def home_page():
+    return render_template('index.html')

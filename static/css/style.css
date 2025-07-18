@@ -1,0 +1,148 @@
+/* Paleta de colores pastel y relajantes */
+:root {
+    --bg-color: #e6eef5;
+    --text-color: #4a6782;
+    --primary-color: #8da4be;
+    --secondary-color: #aebfd0;
+    --accent-color: #6a96b3;
+    --card-bg: #fff;
+    --shadow-light: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Estilos Generales */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Encabezado */
+.header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 3rem 0;
+    text-align: center;
+    box-shadow: var(--shadow-light);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+/* Sección de Filtros */
+.filters {
+    padding: 2rem 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.filters input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    flex: 1;
+    max-width: 300px;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#filterButton {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+#filterButton:hover {
+    background-color: #5a85a0;
+}
+
+#clearFilterButton {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+
+#clearFilterButton:hover {
+    background-color: #9aa8b5;
+}
+
+/* Lista de Informes */
+.reports-list {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+}
+
+.list-title {
+    margin-top: 0;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.report-card {
+    background-color: var(--card-bg);
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow-light);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.report-card h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.report-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.report-meta {
+    color: var(--secondary-color);
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+#loadingMessage {
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+/* Pie de Página */
+.footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--secondary-color);
+}
