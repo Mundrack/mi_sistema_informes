@@ -412,3 +412,23 @@ def eliminar_informe(informe_id):
 @app.route('/')
 def home_page():
     return render_template('login.html')
+
+# =========================================================
+# RUTAS PARA EL DASHBOARD Y MÉTRICAS
+# =========================================================
+
+@app.route('/dashboard/metrics', methods=['GET'])
+def get_metrics():
+    total_informes = Informe.query.count()
+    total_monitoreo = Informe.query.filter_by(tipo_informe='monitoreo').count()
+    total_boletin = Informe.query.filter_by(tipo_informe='boletin').count()
+    total_vulnerabilidad = Informe.query.filter_by(tipo_informe='vulnerabilidad').count()
+    total_incidente = Informe.query.filter_by(tipo_informe='incidente').count()
+    
+    return jsonify({
+        "total_informes": total_informes,
+        "total_monitoreo": total_monitoreo,
+        "total_boletin": total_boletin,
+        "total_vulnerabilidad": total_vulnerabilidad,
+        "total_incidente": total_incidente
+    })
