@@ -170,7 +170,6 @@ def cambiar_estado_usuario(usuario_id):
 # RUTAS PARA LA GESTIÓN DE INFORMES
 # (Ruta de creación para el rol 'employer')
 # =========================================================
-
 @app.route('/informes/crear', methods=['POST'])
 def crear_informe():
     data = request.get_json()
@@ -195,11 +194,10 @@ def crear_informe():
 
     try:
         db.session.add(nuevo_informe)
-        db.session.commit()
+        db.session.flush() # Guardamos para obtener el ID, pero no comiteamos
 
         # Guardar los datos específicos según el tipo de informe
         if tipo_informe == 'monitoreo':
-            # Lógica para guardar el informe de Monitoreo
             detalles_monitoreo = data.get('detalles', [])
             for item in detalles_monitoreo:
                 nuevo_detalle = Monitoreo(
@@ -210,7 +208,6 @@ def crear_informe():
                 db.session.add(nuevo_detalle)
         
         elif tipo_informe == 'boletin':
-            # Lógica para guardar el Boletín (texto largo)
             contenido = data.get('contenido')
             if contenido:
                 seccion = SeccionInforme(
@@ -220,7 +217,6 @@ def crear_informe():
                 db.session.add(seccion)
         
         elif tipo_informe == 'vulnerabilidad':
-            # Lógica para guardar el Informe de Vulnerabilidades
             vulnerabilidades_list = data.get('vulnerabilidades', [])
             for item in vulnerabilidades_list:
                 nueva_vulnerabilidad = Vulnerabilidad(
@@ -235,12 +231,11 @@ def crear_informe():
                 db.session.add(nueva_vulnerabilidad)
         
         elif tipo_informe == 'incidente':
-            # Lógica para guardar el Informe de Incidentes
             incidente_data = data.get('incidente', {})
             nuevo_incidente = Incidente(
                 informe_id=nuevo_informe.id,
-                fecha_apertura=datetime.fromisoformat(incidente_data.get('fecha_apertura')),
-                fecha_cierre=datetime.fromisoformat(incidente_data.get('fecha_cierre')),
+                fecha_apertura=datetime.strptime(incidente_data.get('fecha_apertura'), '%Y-%m-%d %H:%M:%S'),
+                fecha_cierre=datetime.strptime(incidente_data.get('fecha_cierre'), '%Y-%m-%d %H:%M:%S'),
                 asunto=incidente_data.get('asunto'),
                 origen=incidente_data.get('origen'),
                 detalles=incidente_data.get('detalles'),
@@ -254,12 +249,13 @@ def crear_informe():
                 analista_responsable_id=incidente_data.get('analista_responsable_id')
             )
             db.session.add(nuevo_incidente)
+            db.session.flush() # Aquí se asigna el ID para la cadena de llamadas
 
             cadena_llamadas = incidente_data.get('cadena_llamadas', [])
             for llamada in cadena_llamadas:
                 nueva_llamada = CadenaLlamada(
                     incidente_id=nuevo_incidente.id,
-                    fecha=datetime.fromisoformat(llamada.get('fecha')),
+                    fecha=datetime.strptime(llamada.get('fecha'), '%Y-%m-%d %H:%M:%S'),
                     persona_contacto=llamada.get('persona_contacto'),
                     area_contacto=llamada.get('area_contacto'),
                     accion_comunicacion=llamada.get('accion_comunicacion'),
@@ -267,6 +263,7 @@ def crear_informe():
                 )
                 db.session.add(nueva_llamada)
 
+        # Si todo va bien, comiteamos todos los cambios al final
         db.session.commit()
         
         return jsonify({
@@ -277,3 +274,6 @@ def crear_informe():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Ocurrió un error al crear el informe: {str(e)}"}), 500
+    
+    
+    
