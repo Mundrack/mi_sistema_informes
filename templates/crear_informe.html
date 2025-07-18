@@ -13,6 +13,12 @@
         <div class="container">
             <h1>Crear Nuevo Informe</h1>
             <p>Selecciona el tipo de informe y completa los detalles.</p>
+            <nav class="main-nav">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/crear_informe">Crear Informe</a>
+                <a href="/admin">Panel Admin</a>
+                <a href="#">Cerrar Sesión</a>
+            </nav>
         </div>
     </header>
 
@@ -39,6 +45,7 @@
                     <h3>Detalles de Monitoreo</h3>
                     <div id="monitoreoFieldsContainer">
                         </div>
+                    <button type="button" class="btn btn-secondary" id="addMonitoreoField">Añadir Detalle</button>
                 </div>
 
                 <div id="boletinFields" class="report-fields" style="display: none;">
@@ -59,6 +66,10 @@
                 <div id="incidenteFields" class="report-fields" style="display: none;">
                     <h3>Detalles del Incidente</h3>
                     <div class="form-group">
+                        <label for="asuntoIncidente">Asunto:</label>
+                        <input type="text" id="asuntoIncidente" required>
+                    </div>
+                    <div class="form-group">
                         <label for="fechaApertura">Fecha de Apertura:</label>
                         <input type="datetime-local" id="fechaApertura" required>
                     </div>
@@ -67,14 +78,60 @@
                         <input type="datetime-local" id="fechaCierre">
                     </div>
                     <div class="form-group">
-                        <label for="asuntoIncidente">Asunto:</label>
-                        <input type="text" id="asuntoIncidente" required>
+                        <label for="origenIncidente">Origen:</label>
+                        <input type="text" id="origenIncidente" required>
                     </div>
                     <div class="form-group">
                         <label for="detallesIncidente">Detalles:</label>
                         <textarea id="detallesIncidente" rows="5" required></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="accionesIncidente">Acciones Tomadas:</label>
+                        <textarea id="accionesIncidente" rows="5" required></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="estadoIncidente">Estado:</label>
+                        <select id="estadoIncidente" required>
+                            <option value="ABIERTO">Abierto</option>
+                            <option value="CERRADO">Cerrado</option>
+                            <option value="EN PROCESO">En Proceso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="criticidadIncidente">Criticidad:</label>
+                        <select id="criticidadIncidente" required>
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Crítica">Crítica</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="prioridadIncidente">Prioridad:</label>
+                        <input type="text" id="prioridadIncidente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sitioAfectado">Sitio Afectado:</label>
+                        <input type="text" id="sitioAfectado">
+                    </div>
+                    <div class="form-group">
+                        <label for="ipOrigen">IP Origen:</label>
+                        <input type="text" id="ipOrigen">
+                    </div>
+                    <div class="form-group">
+                        <label for="usuarioResponsable">Usuario Responsable ID:</label>
+                        <input type="number" id="usuarioResponsable" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="analistaResponsable">Analista Responsable ID:</label>
+                        <input type="number" id="analistaResponsable" required>
+                    </div>
+                    
+                    <h4>Cadena de Llamadas</h4>
+                    <div id="llamadasContainer">
+                        </div>
+                    <button type="button" class="btn btn-secondary" id="addLlamada">Añadir Llamada</button>
+                </div>
 
                 <div class="form-submit">
                     <button type="submit" class="btn btn-primary">Crear Informe</button>
