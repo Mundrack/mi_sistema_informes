@@ -406,9 +406,9 @@ def eliminar_informe(informe_id):
         return jsonify({"error": f"Ocurrió un error al eliminar el informe: {str(e)}"}), 500
      
 # =========================================================
-# RUTA PARA SERVIR LA PÁGINA PRINCIPAL
+# RUTA PARA SERVIR LA PÁGINA DE LOGIN
 # =========================================================
 
 @app.route('/')
 def home_page():
-    return render_template('index.html')
+    return render_template('login.html')

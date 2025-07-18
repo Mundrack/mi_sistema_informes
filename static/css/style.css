@@ -1,15 +1,15 @@
-/* Paleta de colores pastel y relajantes */
+/* Paleta de colores cálidos y suaves */
 :root {
-    --bg-color: #e6eef5;
-    --text-color: #4a6782;
-    --primary-color: #8da4be;
-    --secondary-color: #aebfd0;
-    --accent-color: #6a96b3;
-    --card-bg: #fff;
-    --shadow-light: 0 4px 8px rgba(0,0,0,0.05);
+    --bg-color: #282c34; /* Gris oscuro para un fondo relajante */
+    --text-color: #f8f8f2; /* Gris claro para las letras */
+    --primary-color: #5d93af; /* Azul suave para elementos principales */
+    --secondary-color: #727b87; /* Gris azulado para acentos y bordes */
+    --accent-color: #a1c8d7; /* Azul más claro para botones y hover */
+    --card-bg: #3a4049; /* Gris más claro para las tarjetas */
+    --shadow-light: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Estilos Generales */
+/* Estilos Generales y Tipografía */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--bg-color);
@@ -17,6 +17,9 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .container {
@@ -25,11 +28,72 @@ body {
     padding: 0 20px;
 }
 
-/* Encabezado */
+/* Estilos del Formulario de Login */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    background-color: #2e3239;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: var(--accent-color);
+}
+
+/* Estilos para el Dashboard (futuro) */
 .header {
     background-color: var(--primary-color);
     color: #fff;
-    padding: 3rem 0;
+    padding: 2rem 0;
     text-align: center;
     box-shadow: var(--shadow-light);
 }
@@ -39,7 +103,6 @@ body {
     font-size: 2.5rem;
 }
 
-/* Sección de Filtros */
 .filters {
     padding: 2rem 0;
     display: flex;
@@ -50,11 +113,13 @@ body {
 
 .filters input {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--secondary-color);
     border-radius: 5px;
     font-size: 1rem;
     flex: 1;
     max-width: 300px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
 }
 
 .btn {
@@ -67,47 +132,27 @@ body {
     transition: background-color 0.3s ease;
 }
 
-#filterButton {
-    background-color: var(--accent-color);
+.btn-primary {
+    background-color: var(--primary-color);
     color: #fff;
 }
 
-#filterButton:hover {
-    background-color: #5a85a0;
+.btn-primary:hover {
+    background-color: var(--accent-color);
 }
 
-#clearFilterButton {
+.btn-secondary {
     background-color: var(--secondary-color);
     color: #fff;
 }
 
-#clearFilterButton:hover {
-    background-color: #9aa8b5;
-}
-
-/* Lista de Informes */
-.reports-list {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow-light);
-}
-
-.list-title {
-    margin-top: 0;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-}
-
-.report-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+.btn-secondary:hover {
+    background-color: #6a7480;
 }
 
 .report-card {
     background-color: var(--card-bg);
-    border: 1px solid #eee;
+    border: 1px solid var(--secondary-color);
     border-radius: 8px;
     padding: 20px;
     box-shadow: var(--shadow-light);
@@ -116,17 +161,12 @@ body {
 
 .report-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 .report-card h3 {
     margin-top: 0;
-    color: var(--primary-color);
-}
-
-.report-card p {
-    margin: 5px 0;
-    font-size: 0.9rem;
+    color: var(--accent-color);
 }
 
 .report-meta {
@@ -135,14 +175,9 @@ body {
     font-size: 0.8rem;
 }
 
-#loadingMessage {
-    text-align: center;
-    color: var(--secondary-color);
-}
-
-/* Pie de Página */
 .footer {
     text-align: center;
     padding: 2rem 0;
     color: var(--secondary-color);
+    margin-top: auto;
 }

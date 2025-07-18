@@ -19,4 +19,11 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 # Importa el archivo de rutas para que los endpoints sean registrados
-from routes import * # <--- Agrega esta línea
+from routes import * 
+
+# RUTA PARA EL DASHBOARD (la futura página principal)
+@app.route('/dashboard')
+def dashboard_page():
+    return render_template('dashboard.html')
+
+from routes import *
