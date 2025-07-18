@@ -1,7 +1,6 @@
 # Archivo: models/__init__.py
 
-from app import db, bcrypt  # <--- Importa bcrypt
-# (Las otras importaciones se mantienen)
+from app import db, bcrypt
 from .informes import Informe, SeccionInforme
 from .monitoreo import Monitoreo, DetalleCorreoAtacante
 from .vulnerabilidades import Vulnerabilidad
@@ -12,7 +11,8 @@ class Rol(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), unique=True, nullable=False)
-    usuarios = db.relationship('Usuario', backref='rol', lazy=True)
+    # Relación con la tabla de usuarios
+    usuarios = db.relationship('Usuario', backref='rol_usuario', lazy=True)
 
 # Tabla para los grupos de Manager
 class Grupo(db.Model):
@@ -20,7 +20,8 @@ class Grupo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True, nullable=False)
     descripcion = db.Column(db.Text, nullable=True)
-    usuarios = db.relationship('Usuario', backref='grupo', lazy=True)
+    # Relación con la tabla de usuarios (Managers)
+    usuarios = db.relationship('Usuario', backref='grupo_usuario', lazy=True)
 
 # Tabla para los usuarios del sistema
 class Usuario(db.Model):
@@ -33,6 +34,10 @@ class Usuario(db.Model):
     grupo_id = db.Column(db.Integer, db.ForeignKey('grupos.id'), nullable=True)
     activo = db.Column(db.Boolean, default=True)
 
+    # Relaciones para poder acceder al rol y al grupo
+    rol = db.relationship('Rol', backref='usuarios_por_rol', foreign_keys=[rol_id])
+    grupo = db.relationship('Grupo', backref='usuarios_por_grupo', foreign_keys=[grupo_id])
+
     # Método para hashear la contraseña
     def set_password(self, password):
         self.contrasena_hash = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -43,5 +48,3 @@ class Usuario(db.Model):
 
     def __repr__(self):
         return f'<Usuario {self.nombre_usuario}>'
-    
-    

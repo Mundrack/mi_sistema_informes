@@ -1,3 +1,5 @@
+# Archivo: models/informes.py
+
 from app import db
 import datetime
 
@@ -5,7 +7,7 @@ import datetime
 class Informe(db.Model):
     __tablename__ = 'informes'
     id = db.Column(db.Integer, primary_key=True)
-    report_number = db.Column(db.String(50), nullable=True) # Del informe de vulnerabilidades
+    report_number = db.Column(db.String(50), nullable=True)
     titulo = db.Column(db.String(255), nullable=False)
     asunto = db.Column(db.String(255), nullable=True)
     destinatario = db.Column(db.String(150), nullable=True)
@@ -17,6 +19,10 @@ class Informe(db.Model):
     autor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     grupo_id = db.Column(db.Integer, db.ForeignKey('grupos.id'), nullable=True)
 
+    # Definimos las relaciones para poder acceder al objeto autor y grupo
+    autor = db.relationship('Usuario', backref='informes', foreign_keys=[autor_id])
+    grupo = db.relationship('Grupo', backref='informes_grupo', foreign_keys=[grupo_id])
+
 # Tabla para el Contenido del Informe (para boletines y secciones de texto)
 class SeccionInforme(db.Model):
     __tablename__ = 'secciones_informe'
@@ -24,3 +30,5 @@ class SeccionInforme(db.Model):
     informe_id = db.Column(db.Integer, db.ForeignKey('informes.id'), nullable=False)
     seccion_titulo = db.Column(db.String(150), nullable=True)
     contenido_html = db.Column(db.Text, nullable=True)
+
+    informe = db.relationship('Informe', backref='secciones')

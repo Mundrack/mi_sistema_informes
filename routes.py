@@ -275,5 +275,139 @@ def crear_informe():
         db.session.rollback()
         return jsonify({"error": f"Ocurrió un error al crear el informe: {str(e)}"}), 500
     
+# =========================================================
+# RUTAS PARA LEER INFORMES
+# =========================================================
+
+@app.route('/informes', methods=['GET'])
+def listar_informes():
+    # Obtener el parámetro de filtro de la URL
+    tipo_informe = request.args.get('tipo_informe')
     
+    # Obtener el parámetro para incluir informes eliminados
+    # Por ahora, cualquier usuario puede usarlo. Más adelante, solo el 'admin'.
+    incluir_eliminados = request.args.get('incluir_eliminados', 'false').lower() == 'true'
+
+    query = Informe.query
     
+    # Filtra los informes por tipo, si se especifica
+    if tipo_informe:
+        query = query.filter_by(tipo_informe=tipo_informe)
+    
+    # Filtra los informes que NO están eliminados, a menos que se especifique
+    if not incluir_eliminados:
+        query = query.filter_by(estado_eliminado=False)
+    
+    informes = query.all()
+    
+    lista_informes = []
+    for informe in informes:
+        reporte = {
+            "id": informe.id,
+            "titulo": informe.titulo,
+            "tipo_informe": informe.tipo_informe,
+            "fecha_creacion": informe.fecha_creacion,
+            "autor_id": informe.autor_id,
+            "autor_nombre": informe.autor.nombre_completo,
+            "estado_eliminado": informe.estado_eliminado
+        }
+        
+        lista_informes.append(reporte)
+        
+    return jsonify(lista_informes), 200
+
+# =========================================================
+# RUTAS PARA LA GESTIÓN DE INFORMES - EDICIÓN
+# =========================================================
+
+@app.route('/informes/<int:informe_id>', methods=['PUT'])
+def editar_informe(informe_id):
+    informe_original = Informe.query.get_or_404(informe_id)
+    data = request.get_json()
+    
+    try:
+        # 1. Crear una copia de la versión original
+        informe_copia = Informe(
+            titulo=informe_original.titulo,
+            tipo_informe=informe_original.tipo_informe,
+            fecha_creacion=informe_original.fecha_creacion,
+            version=informe_original.version,
+            autor_id=informe_original.autor_id,
+            grupo_id=informe_original.grupo_id,
+            estado_eliminado=informe_original.estado_eliminado
+        )
+        db.session.add(informe_copia)
+        db.session.flush() # Para obtener el ID de la copia
+
+        # 2. Copiar los detalles del informe original a la copia
+        if informe_original.tipo_informe == 'monitoreo':
+            for item in informe_original.detalles_monitoreo:
+                db.session.add(Monitoreo(informe_id=informe_copia.id, tipo_amenaza=item.tipo_amenaza, valor=item.valor))
+        
+        elif informe_original.tipo_informe == 'boletin':
+            for seccion in informe_original.secciones:
+                db.session.add(SeccionInforme(informe_id=informe_copia.id, seccion_titulo=seccion.seccion_titulo, contenido_html=seccion.contenido_html))
+
+        elif informe_original.tipo_informe == 'vulnerabilidad':
+            for item in informe_original.vulnerabilidades_list:
+                db.session.add(Vulnerabilidad(
+                    informe_id=informe_copia.id, nombre_vulnerabilidad=item.nombre_vulnerabilidad, nivel_criticidad=item.nivel_criticidad,
+                    sitio_web=item.sitio_web, descripcion=item.descripcion, impacto=item.impacto, mitigacion=item.mitigacion
+                ))
+        
+        elif informe_original.tipo_informe == 'incidente':
+            # Solo se copia el objeto Incidente principal
+            incidente_original = Incidente.query.filter_by(informe_id=informe_original.id).first()
+            if incidente_original:
+                incidente_copia = Incidente(
+                    informe_id=informe_copia.id, fecha_apertura=incidente_original.fecha_apertura, fecha_cierre=incidente_original.fecha_cierre,
+                    asunto=incidente_original.asunto, origen=incidente_original.origen, detalles=incidente_original.detalles,
+                    acciones_tomadas=incidente_original.acciones_tomadas, estado=incidente_original.estado, criticidad=incidente_original.criticidad,
+                    prioridad=incidente_original.prioridad, sitio_afectado=incidente_original.sitio_afectado, ip_origen=incidente_original.ip_origen,
+                    usuario_responsable_id=incidente_original.usuario_responsable_id, analista_responsable_id=incidente_original.analista_responsable_id
+                )
+                db.session.add(incidente_copia)
+
+            # Se copian también los registros de cadena de llamadas
+            for llamada in incidente_original.cadena_comunicacion:
+                db.session.add(CadenaLlamada(
+                    incidente_id=incidente_copia.id, fecha=llamada.fecha, persona_contacto=llamada.persona_contacto,
+                    area_contacto=llamada.area_contacto, accion_comunicacion=llamada.accion_comunicacion, detalles_comunicacion=llamada.detalles_comunicacion
+                ))
+
+
+        # 3. Actualizar el informe original con los nuevos datos
+        # Actualizamos solo los campos que pueden ser editados
+        informe_original.titulo = data.get('titulo', informe_original.titulo)
+        # Aquí puedes añadir la lógica para actualizar los detalles específicos de cada tipo
+        
+        # Incrementar el número de versión
+        informe_original.version += 1
+        
+        db.session.commit()
+        return jsonify({
+            "message": "Informe actualizado y versión anterior guardada",
+            "informe_id": informe_original.id,
+            "nueva_version": informe_original.version
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Ocurrió un error al editar el informe: {str(e)}"}), 500
+
+# =========================================================
+# RUTAS PARA LA ELIMINACIÓN LÓGICA DE INFORMES
+# =========================================================
+
+@app.route('/informes/<int:informe_id>', methods=['DELETE'])
+def eliminar_informe(informe_id):
+    informe = Informe.query.get_or_404(informe_id)
+    
+    informe.estado_eliminado = True
+    
+    try:
+        db.session.commit()
+        return jsonify({"message": f"Informe con ID {informe.id} eliminado lógicamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Ocurrió un error al eliminar el informe: {str(e)}"}), 500
