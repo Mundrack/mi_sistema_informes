@@ -81,3 +81,48 @@ def crear_usuario():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Ocurrió un error al crear el usuario: {str(e)}"}), 500
+    
+# =========================================================
+# RUTAS DE ADMINISTRACIÓN PARA GRUPOS
+# =========================================================
+
+@app.route('/admin/crear_grupo', methods=['POST'])
+def crear_grupo():
+    data = request.get_json()
+    nombre = data.get('nombre')
+    descripcion = data.get('descripcion')
+
+    # Validación básica
+    if not nombre:
+        return jsonify({"error": "El nombre del grupo es obligatorio"}), 400
+
+    # Verificar que el grupo no exista ya
+    if Grupo.query.filter_by(nombre=nombre).first():
+        return jsonify({"error": "El nombre del grupo ya existe"}), 409
+
+    # Crear el nuevo grupo
+    nuevo_grupo = Grupo(nombre=nombre, descripcion=descripcion)
+
+    try:
+        db.session.add(nuevo_grupo)
+        db.session.commit()
+        return jsonify({
+            "message": "Grupo creado exitosamente",
+            "id": nuevo_grupo.id,
+            "nombre": nuevo_grupo.nombre
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Ocurrió un error al crear el grupo: {str(e)}"}), 500
+
+@app.route('/admin/listar_grupos', methods=['GET'])
+def listar_grupos():
+    grupos = Grupo.query.all()
+    lista_grupos = []
+    for grupo in grupos:
+        lista_grupos.append({
+            "id": grupo.id,
+            "nombre": grupo.nombre,
+            "descripcion": grupo.descripcion
+        })
+    return jsonify(lista_grupos), 200
