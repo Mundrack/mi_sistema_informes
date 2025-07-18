@@ -435,3 +435,7 @@ def get_metrics():
         "total_vulnerabilidad": total_vulnerabilidad,
         "total_incidente": total_incidente
     })
+    
+@app.route('/crear_informe')
+def crear_informe_page():
+    return render_template('crear_informe.html')

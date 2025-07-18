@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Informe - Sistema de Informes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Crear Nuevo Informe</h1>
+            <p>Selecciona el tipo de informe y completa los detalles.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="form-section">
+            <form id="reportForm" class="report-form">
+                <div class="form-group">
+                    <label for="reportTitle">Título del Informe:</label>
+                    <input type="text" id="reportTitle" name="titulo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="reportType">Tipo de Informe:</label>
+                    <select id="reportType" name="tipo_informe" required>
+                        <option value="">-- Selecciona un tipo --</option>
+                        <option value="monitoreo">Monitoreo</option>
+                        <option value="boletin">Boletín</option>
+                        <option value="vulnerabilidad">Vulnerabilidad</option>
+                        <option value="incidente">Incidente</option>
+                    </select>
+                </div>
+
+                <div id="monitoreoFields" class="report-fields" style="display: none;">
+                    <h3>Detalles de Monitoreo</h3>
+                    <div id="monitoreoFieldsContainer">
+                        </div>
+                </div>
+
+                <div id="boletinFields" class="report-fields" style="display: none;">
+                    <h3>Contenido del Boletín</h3>
+                    <div class="form-group">
+                        <label for="boletinContent">Contenido (HTML permitido):</label>
+                        <textarea id="boletinContent" rows="10"></textarea>
+                    </div>
+                </div>
+
+                <div id="vulnerabilidadFields" class="report-fields" style="display: none;">
+                    <h3>Detalles de Vulnerabilidad</h3>
+                    <div id="vulnerabilidadFieldsContainer">
+                        </div>
+                    <button type="button" class="btn btn-secondary" id="addVulnerabilidad">Añadir Vulnerabilidad</button>
+                </div>
+
+                <div id="incidenteFields" class="report-fields" style="display: none;">
+                    <h3>Detalles del Incidente</h3>
+                    <div class="form-group">
+                        <label for="fechaApertura">Fecha de Apertura:</label>
+                        <input type="datetime-local" id="fechaApertura" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaCierre">Fecha de Cierre:</label>
+                        <input type="datetime-local" id="fechaCierre">
+                    </div>
+                    <div class="form-group">
+                        <label for="asuntoIncidente">Asunto:</label>
+                        <input type="text" id="asuntoIncidente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="detallesIncidente">Detalles:</label>
+                        <textarea id="detallesIncidente" rows="5" required></textarea>
+                    </div>
+                    </div>
+
+                <div class="form-submit">
+                    <button type="submit" class="btn btn-primary">Crear Informe</button>
+                    <p id="formMessage"></p>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Sistema de Gestión de Informes de Ciberdefensa &copy; 2025</p>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/crear_informe.js') }}"></script>
+</body>
+</html>

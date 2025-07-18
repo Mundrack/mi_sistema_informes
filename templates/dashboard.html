@@ -10,8 +10,12 @@
 <body>
     <header class="header">
         <div class="container">
-            <h1>Dashboard de Informes</h1>
-            <p>Visualiza y gestiona los informes de seguridad de la Fuerza Terrestre.</p>
+            <nav class="nav-bar">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/crear_informe" class="nav-link">Crear Informe</a>
+                <a href="/admin/usuarios" class="nav-link">Gestión de Usuarios</a>
+                <a href="/logout" class="nav-link">Salir</a>
+            </nav>
         </div>
     </header>
 
@@ -19,7 +23,27 @@
         <section class="metrics">
             <h2 class="list-title">Métricas Clave</h2>
             <div class="metric-grid" id="metricContainer">
+                <div class="metric-card" data-report-type="monitoreo">
+                    <h3>Informes de Monitoreo</h3>
+                    <p id="totalMonitoreo"></p>
                 </div>
+                <div class="metric-card" data-report-type="vulnerabilidad">
+                    <h3>Informes de Vulnerabilidad</h3>
+                    <p id="totalVulnerabilidad"></p>
+                </div>
+                <div class="metric-card" data-report-type="incidente">
+                    <h3>Informes de Incidente</h3>
+                    <p id="totalIncidente"></p>
+                </div>
+                <div class="metric-card" data-report-type="boletin">
+                    <h3>Boletines</h3>
+                    <p id="totalBoletin"></p>
+                </div>
+                <div class="metric-card" data-report-type="total">
+                    <h3>Total de Informes</h3>
+                    <p id="totalInformes"></p>
+                </div>
+            </div>
         </section>
 
         <section class="reports-list">
@@ -28,26 +52,12 @@
                 <input type="text" id="filterInput" placeholder="Filtrar por tipo (ej: boletin)">
                 <button id="filterButton" class="btn btn-primary">Aplicar Filtro</button>
                 <button id="clearFilterButton" class="btn btn-secondary">Mostrar Todos</button>
+                <button id="deletedButton" class="btn btn-secondary">Ver Eliminados</button>
             </section>
             <div id="reportsContainer" class="report-grid">
                 </div>
             <p id="loadingMessage">Cargando informes...</p>
         </section>
-    </main>
-
-    <main class="container">
-    <section class="reports-list">
-        <h2 class="list-title">Informes Disponibles</h2>
-        <section class="filters">
-            <input type="text" id="filterInput" placeholder="Filtrar por tipo (ej: boletin)">
-            <button id="filterButton" class="btn btn-primary">Aplicar Filtro</button>
-            <button id="clearFilterButton" class="btn btn-secondary">Mostrar Todos</button>
-            <button id="deletedButton" class="btn btn-secondary">Ver Eliminados</button>
-        </section>
-        <div id="reportsContainer" class="report-grid">
-            </div>
-        <p id="loadingMessage">Cargando informes...</p>
-    </section>
     </main>
 
     <footer class="footer">

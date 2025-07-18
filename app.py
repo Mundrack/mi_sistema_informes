@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from config import Config
+from flask import Flask, render_template
 
 # Inicializa la aplicación Flask
 app = Flask(__name__)
