@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterInput = document.getElementById('filterInput');
     const filterButton = document.getElementById('filterButton');
     const clearFilterButton = document.getElementById('clearFilterButton');
+    const deletedButton = document.getElementById('deletedButton');
     const loadingMessage = document.getElementById('loadingMessage');
     
     const API_URL = 'http://127.0.0.1:5000/informes';
@@ -59,15 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Función para obtener y mostrar informes (la misma que ya tenías)
-    const fetchReports = async (filter = null) => {
+    // Función para obtener y mostrar informes
+    const fetchReports = async (filter = null, showDeleted = false) => {
         reportsContainer.innerHTML = '';
         loadingMessage.style.display = 'block';
 
         let url = API_URL;
+        let params = new URLSearchParams();
+        
         if (filter) {
-            url += `?tipo_informe=${filter}`;
+            params.append('tipo_informe', filter);
         }
+        
+        if (showDeleted) {
+            params.append('incluir_eliminados', 'true');
+        }
+        
+        url += '?' + params.toString();
 
         try {
             const response = await fetch(url);
@@ -115,12 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
         filterInput.value = '';
         fetchReports();
     });
-    
-    filterInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Evita que el formulario se envíe si lo hay
-        filterButton.click(); // Simula el clic en el botón de filtro
-    }
+
+    deletedButton.addEventListener('click', () => {
+        fetchReports(null, true);
     });
 
     // Cargar métricas e informes al iniciar la página

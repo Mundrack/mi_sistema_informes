@@ -274,23 +274,26 @@ def crear_informe():
 
 @app.route('/informes', methods=['GET'])
 def listar_informes():
-    # Obtener el parámetro de filtro de la URL
-    tipo_informe = request.args.get('tipo_informe')
+    # Asumimos que el usuario 'admin' es quien hace la petición para ver eliminados.
+    # En una implementación real, esto se haría con JWT.
+    usuario = Usuario.query.filter_by(nombre_usuario='admin').first()
     
-    # Obtener el parámetro para incluir informes eliminados
-    # Por ahora, cualquier usuario puede usarlo. Más adelante, solo el 'admin'.
+    tipo_informe = request.args.get('tipo_informe')
     incluir_eliminados = request.args.get('incluir_eliminados', 'false').lower() == 'true'
 
     query = Informe.query
     
-    # Filtra los informes por tipo, si se especifica
     if tipo_informe:
         query = query.filter_by(tipo_informe=tipo_informe)
     
-    # Filtra los informes que NO están eliminados, a menos que se especifique
+    # Solo el administrador puede ver los informes eliminados
     if not incluir_eliminados:
         query = query.filter_by(estado_eliminado=False)
-    
+    else:
+        # Si se pide incluir eliminados, verificamos si el usuario es admin
+        if not usuario or usuario.rol.nombre != 'admin':
+            return jsonify({"error": "No tienes permisos para ver informes eliminados"}), 403
+
     informes = query.all()
     
     lista_informes = []

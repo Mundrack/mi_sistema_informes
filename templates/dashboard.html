@@ -35,6 +35,21 @@
         </section>
     </main>
 
+    <main class="container">
+    <section class="reports-list">
+        <h2 class="list-title">Informes Disponibles</h2>
+        <section class="filters">
+            <input type="text" id="filterInput" placeholder="Filtrar por tipo (ej: boletin)">
+            <button id="filterButton" class="btn btn-primary">Aplicar Filtro</button>
+            <button id="clearFilterButton" class="btn btn-secondary">Mostrar Todos</button>
+            <button id="deletedButton" class="btn btn-secondary">Ver Eliminados</button>
+        </section>
+        <div id="reportsContainer" class="report-grid">
+            </div>
+        <p id="loadingMessage">Cargando informes...</p>
+    </section>
+    </main>
+
     <footer class="footer">
         <div class="container">
             <p>Sistema de Gestión de Informes de Ciberdefensa &copy; 2025</p>
