@@ -1,12 +1,12 @@
-/* Paleta de colores cálidos y suaves */
+/* Paleta de colores neutros y terrosos */
 :root {
-    --bg-color: #282c34; /* Gris oscuro para un fondo relajante */
-    --text-color: #f8f8f2; /* Gris claro para las letras */
-    --primary-color: #5d93af; /* Azul suave para elementos principales */
-    --secondary-color: #727b87; /* Gris azulado para acentos y bordes */
-    --accent-color: #a1c8d7; /* Azul más claro para botones y hover */
-    --card-bg: #3a4049; /* Gris más claro para las tarjetas */
-    --shadow-light: 0 4px 8px rgba(0,0,0,0.2);
+    --bg-color: #f7f3f0; /* Gris muy claro para el fondo */
+    --text-color: #4a4a4a; /* Gris oscuro para el texto */
+    --primary-color: #725b53; /* Marrón suave para elementos principales */
+    --secondary-color: #a3948e; /* Gris cálido para acentos */
+    --accent-color: #92756a; /* Marrón rojizo para botones y hover */
+    --card-bg: #fff; /* Blanco para las tarjetas */
+    --shadow-light: 0 4px 8px rgba(0,0,0,0.05);
 }
 
 /* Estilos Generales y Tipografía */
@@ -26,6 +26,24 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* Encabezado y Navegación */
+.header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.5rem;
 }
 
 /* Estilos del Formulario de Login */
@@ -89,20 +107,47 @@ body {
     background-color: var(--accent-color);
 }
 
-/* Estilos para el Dashboard (futuro) */
-.header {
-    background-color: var(--primary-color);
-    color: #fff;
+/* Sección de Métricas */
+.metrics {
     padding: 2rem 0;
+}
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.metric-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    padding: 20px;
     text-align: center;
     box-shadow: var(--shadow-light);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.header h1 {
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.metric-card h3 {
     margin: 0;
-    font-size: 2.5rem;
+    font-size: 1.1rem;
+    color: var(--primary-color);
 }
 
+.metric-card p {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 10px 0 0;
+    color: var(--text-color);
+}
+
+/* Sección de Filtros */
 .filters {
     padding: 2rem 0;
     display: flex;
@@ -150,8 +195,29 @@ body {
     background-color: #6a7480;
 }
 
-.report-card {
+/* Lista de Informes */
+.reports-list {
     background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+}
+
+.list-title {
+    margin-top: 0;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.report-card {
+    background-color: var(--bg-color);
     border: 1px solid var(--secondary-color);
     border-radius: 8px;
     padding: 20px;
@@ -169,12 +235,23 @@ body {
     color: var(--accent-color);
 }
 
+.report-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
 .report-meta {
     color: var(--secondary-color);
     font-style: italic;
     font-size: 0.8rem;
 }
 
+#loadingMessage {
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+/* Pie de Página */
 .footer {
     text-align: center;
     padding: 2rem 0;

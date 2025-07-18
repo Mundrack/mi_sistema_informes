@@ -419,11 +419,11 @@ def home_page():
 
 @app.route('/dashboard/metrics', methods=['GET'])
 def get_metrics():
-    total_informes = Informe.query.count()
-    total_monitoreo = Informe.query.filter_by(tipo_informe='monitoreo').count()
-    total_boletin = Informe.query.filter_by(tipo_informe='boletin').count()
-    total_vulnerabilidad = Informe.query.filter_by(tipo_informe='vulnerabilidad').count()
-    total_incidente = Informe.query.filter_by(tipo_informe='incidente').count()
+    total_informes = Informe.query.filter_by(estado_eliminado=False).count()
+    total_monitoreo = Informe.query.filter_by(tipo_informe='monitoreo', estado_eliminado=False).count()
+    total_boletin = Informe.query.filter_by(tipo_informe='boletin', estado_eliminado=False).count()
+    total_vulnerabilidad = Informe.query.filter_by(tipo_informe='vulnerabilidad', estado_eliminado=False).count()
+    total_incidente = Informe.query.filter_by(tipo_informe='incidente', estado_eliminado=False).count()
     
     return jsonify({
         "total_informes": total_informes,

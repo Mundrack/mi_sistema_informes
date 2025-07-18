@@ -23,27 +23,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para mostrar las métricas en cuadros
     const displayMetrics = (metrics) => {
         metricContainer.innerHTML = `
-            <div class="metric-card">
-                <h3>Total de Informes</h3>
-                <p>${metrics.total_informes}</p>
-            </div>
-            <div class="metric-card">
+            <div class="metric-card" data-report-type="monitoreo">
                 <h3>Informes de Monitoreo</h3>
                 <p>${metrics.total_monitoreo}</p>
             </div>
-            <div class="metric-card">
+            <div class="metric-card" data-report-type="vulnerabilidad">
                 <h3>Informes de Vulnerabilidad</h3>
                 <p>${metrics.total_vulnerabilidad}</p>
             </div>
-            <div class="metric-card">
+            <div class="metric-card" data-report-type="incidente">
                 <h3>Informes de Incidente</h3>
                 <p>${metrics.total_incidente}</p>
             </div>
-            <div class="metric-card">
+            <div class="metric-card" data-report-type="boletin">
                 <h3>Boletines</h3>
                 <p>${metrics.total_boletin}</p>
             </div>
+            <div class="metric-card" data-report-type="total">
+                <h3>Total de Informes</h3>
+                <p>${metrics.total_informes}</p>
+            </div>
         `;
+
+        // Añadir lógica para que los cuadros sean clicables
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const reportType = card.dataset.reportType;
+                if (reportType === 'total') {
+                    fetchReports(); // Mostrar todos los informes
+                } else {
+                    fetchReports(reportType); // Filtrar por tipo
+                    filterInput.value = reportType;
+                }
+            });
+        });
     };
 
     // Función para obtener y mostrar informes (la misma que ya tenías)
@@ -101,6 +114,13 @@ document.addEventListener('DOMContentLoaded', () => {
     clearFilterButton.addEventListener('click', () => {
         filterInput.value = '';
         fetchReports();
+    });
+    
+    filterInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Evita que el formulario se envíe si lo hay
+        filterButton.click(); // Simula el clic en el botón de filtro
+    }
     });
 
     // Cargar métricas e informes al iniciar la página
