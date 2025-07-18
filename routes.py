@@ -1,8 +1,10 @@
 # Archivo: routes.py
 
+# Archivo: routes.py
 from flask import request, jsonify
 from app import app, db, bcrypt
-from models import Usuario, Rol, Grupo
+from models import Usuario, Rol, Grupo, Informe, SeccionInforme, Monitoreo, DetalleCorreoAtacante, Vulnerabilidad, Incidente, CadenaLlamada 
+from datetime import datetime # <--- ¡AÑADE ESTA LÍNEA!
 
 # =========================================================
 # RUTAS DE PRUEBA
@@ -126,3 +128,152 @@ def listar_grupos():
             "descripcion": grupo.descripcion
         })
     return jsonify(lista_grupos), 200
+
+# =========================================================
+# RUTAS DE ADMINISTRACIÓN PARA USUARIOS
+# =========================================================
+
+@app.route('/admin/listar_usuarios', methods=['GET'])
+def listar_usuarios():
+    usuarios = Usuario.query.all()
+    lista_usuarios = []
+    for usuario in usuarios:
+        lista_usuarios.append({
+            "id": usuario.id,
+            "nombre_completo": usuario.nombre_completo,
+            "nombre_usuario": usuario.nombre_usuario,
+            "rol": usuario.rol.nombre,
+            "grupo": usuario.grupo.nombre if usuario.grupo else None,
+            "activo": usuario.activo
+        })
+    return jsonify(lista_usuarios), 200
+
+@app.route('/admin/cambiar_estado_usuario/<int:usuario_id>', methods=['PUT'])
+def cambiar_estado_usuario(usuario_id):
+    usuario = Usuario.query.get(usuario_id)
+
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    # Cambia el estado (activo a inactivo, o viceversa)
+    usuario.activo = not usuario.activo
+    
+    try:
+        db.session.commit()
+        estado = "activo" if usuario.activo else "inactivo"
+        return jsonify({"message": f"Estado del usuario '{usuario.nombre_usuario}' cambiado a '{estado}'"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Ocurrió un error al actualizar el estado: {str(e)}"}), 500
+    
+# =========================================================
+# RUTAS PARA LA GESTIÓN DE INFORMES
+# (Ruta de creación para el rol 'employer')
+# =========================================================
+
+@app.route('/informes/crear', methods=['POST'])
+def crear_informe():
+    data = request.get_json()
+    
+    # Asumimos que el usuario 'admin' es el que crea el informe.
+    # Más adelante, implementaremos la autenticación real.
+    usuario = Usuario.query.filter_by(nombre_usuario='admin').first()
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    titulo = data.get('titulo')
+    tipo_informe = data.get('tipo_informe')
+    if not all([titulo, tipo_informe]):
+        return jsonify({"error": "Faltan datos básicos del informe"}), 400
+
+    # Creamos la entrada principal en la tabla 'informes'
+    nuevo_informe = Informe(
+        titulo=titulo,
+        tipo_informe=tipo_informe,
+        autor_id=usuario.id
+    )
+
+    try:
+        db.session.add(nuevo_informe)
+        db.session.commit()
+
+        # Guardar los datos específicos según el tipo de informe
+        if tipo_informe == 'monitoreo':
+            # Lógica para guardar el informe de Monitoreo
+            detalles_monitoreo = data.get('detalles', [])
+            for item in detalles_monitoreo:
+                nuevo_detalle = Monitoreo(
+                    informe_id=nuevo_informe.id,
+                    tipo_amenaza=item.get('tipo_amenaza'),
+                    valor=item.get('valor')
+                )
+                db.session.add(nuevo_detalle)
+        
+        elif tipo_informe == 'boletin':
+            # Lógica para guardar el Boletín (texto largo)
+            contenido = data.get('contenido')
+            if contenido:
+                seccion = SeccionInforme(
+                    informe_id=nuevo_informe.id,
+                    contenido_html=contenido
+                )
+                db.session.add(seccion)
+        
+        elif tipo_informe == 'vulnerabilidad':
+            # Lógica para guardar el Informe de Vulnerabilidades
+            vulnerabilidades_list = data.get('vulnerabilidades', [])
+            for item in vulnerabilidades_list:
+                nueva_vulnerabilidad = Vulnerabilidad(
+                    informe_id=nuevo_informe.id,
+                    nombre_vulnerabilidad=item.get('nombre_vulnerabilidad'),
+                    nivel_criticidad=item.get('nivel_criticidad'),
+                    sitio_web=item.get('sitio_web'),
+                    descripcion=item.get('descripcion'),
+                    impacto=item.get('impacto'),
+                    mitigacion=item.get('mitigacion')
+                )
+                db.session.add(nueva_vulnerabilidad)
+        
+        elif tipo_informe == 'incidente':
+            # Lógica para guardar el Informe de Incidentes
+            incidente_data = data.get('incidente', {})
+            nuevo_incidente = Incidente(
+                informe_id=nuevo_informe.id,
+                fecha_apertura=datetime.fromisoformat(incidente_data.get('fecha_apertura')),
+                fecha_cierre=datetime.fromisoformat(incidente_data.get('fecha_cierre')),
+                asunto=incidente_data.get('asunto'),
+                origen=incidente_data.get('origen'),
+                detalles=incidente_data.get('detalles'),
+                acciones_tomadas=incidente_data.get('acciones_tomadas'),
+                estado=incidente_data.get('estado'),
+                criticidad=incidente_data.get('criticidad'),
+                prioridad=incidente_data.get('prioridad'),
+                sitio_afectado=incidente_data.get('sitio_afectado'),
+                ip_origen=incidente_data.get('ip_origen'),
+                usuario_responsable_id=incidente_data.get('usuario_responsable_id'),
+                analista_responsable_id=incidente_data.get('analista_responsable_id')
+            )
+            db.session.add(nuevo_incidente)
+
+            cadena_llamadas = incidente_data.get('cadena_llamadas', [])
+            for llamada in cadena_llamadas:
+                nueva_llamada = CadenaLlamada(
+                    incidente_id=nuevo_incidente.id,
+                    fecha=datetime.fromisoformat(llamada.get('fecha')),
+                    persona_contacto=llamada.get('persona_contacto'),
+                    area_contacto=llamada.get('area_contacto'),
+                    accion_comunicacion=llamada.get('accion_comunicacion'),
+                    detalles_comunicacion=llamada.get('detalles_comunicacion')
+                )
+                db.session.add(nueva_llamada)
+
+        db.session.commit()
+        
+        return jsonify({
+            "message": f"Informe de tipo '{tipo_informe}' creado exitosamente",
+            "informe_id": nuevo_informe.id,
+            "titulo": nuevo_informe.titulo
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Ocurrió un error al crear el informe: {str(e)}"}), 500
